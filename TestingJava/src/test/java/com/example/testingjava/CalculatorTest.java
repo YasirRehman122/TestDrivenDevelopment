@@ -9,16 +9,21 @@ import java.util.stream.Stream;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-//@TestMethodOrder(MethodOrderer.OrderAnnotation.class)
+@TestInstance(TestInstance.Lifecycle.PER_CLASS)
 public class CalculatorTest {
 
-    Calculator calculator;
+    Calculator calculator = new Calculator();
+    StringBuilder builder = new StringBuilder("");
 
-    @BeforeEach
-    void setBoilerPlate(){
-        calculator = new Calculator();
+//    @BeforeEach
+//    void setBoilerPlate(){
+//        calculator = new Calculator();
+//    }
+
+    @AfterEach
+    void afterEach(){
+        System.out.println("The state of object is: " + builder);
     }
-
     @Order(3)
     @ParameterizedTest
     @DisplayName("Division with valid values")
@@ -26,6 +31,7 @@ public class CalculatorTest {
     void testIntegerDivision_WhenValidValues_ReturnCorrectResult(Integer dividend, Integer divisor, Integer expectedResult){
         Integer result = calculator.integerDivision(dividend, divisor);
         assertEquals(expectedResult,result,"4/2 should return 2");
+        builder.append("3");
     }
 
     @Order(1)
@@ -40,6 +46,7 @@ public class CalculatorTest {
         }, "Division by zero should give arithmetic exception");
 
         assertEquals(expectedExceptionMessage, exception.getMessage(), "Exception message is incorrect");
+        builder.append(1);
     }
     private static Stream<Arguments> divisionArgumentsProvider(){
         return Stream.of(
@@ -54,5 +61,6 @@ public class CalculatorTest {
     @Order(2)
     void orderTesterMethod(){
         assertEquals(1,1);
+        builder.append(2);
     }
 }
