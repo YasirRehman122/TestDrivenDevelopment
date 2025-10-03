@@ -1,8 +1,6 @@
 package com.example.testingjava;
 
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.*;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
@@ -11,6 +9,7 @@ import java.util.stream.Stream;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+@TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 public class CalculatorTest {
 
     Calculator calculator;
@@ -20,6 +19,7 @@ public class CalculatorTest {
         calculator = new Calculator();
     }
 
+    @Order(2)
     @ParameterizedTest
     @DisplayName("Division with valid values")
     @MethodSource("divisionArgumentsProvider")
@@ -28,6 +28,7 @@ public class CalculatorTest {
         assertEquals(expectedResult,result,"4/2 should return 2");
     }
 
+    @Order(1)
     @Test
     void testIntegerDivision_divisionByZero_throwArithmeticException(){
         int dividend = 5;
