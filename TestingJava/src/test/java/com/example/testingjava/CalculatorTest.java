@@ -9,7 +9,7 @@ import java.util.stream.Stream;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-@TestMethodOrder(MethodOrderer.OrderAnnotation.class)
+//@TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 public class CalculatorTest {
 
     Calculator calculator;
@@ -19,7 +19,7 @@ public class CalculatorTest {
         calculator = new Calculator();
     }
 
-    @Order(2)
+    @Order(3)
     @ParameterizedTest
     @DisplayName("Division with valid values")
     @MethodSource("divisionArgumentsProvider")
@@ -48,5 +48,11 @@ public class CalculatorTest {
                 Arguments.of(35,7,5),
                 Arguments.of(121,11,11)
         );
+    }
+
+    @Test
+    @Order(2)
+    void orderTesterMethod(){
+        assertEquals(1,1);
     }
 }
