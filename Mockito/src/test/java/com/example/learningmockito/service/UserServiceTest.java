@@ -1,5 +1,6 @@
 package com.example.learningmockito.service;
 
+import com.example.learningmockito.exception.EmailNotificationException;
 import com.example.learningmockito.exception.UserException;
 import com.example.learningmockito.model.User;
 import com.example.learningmockito.repository.UserRepository;
@@ -9,7 +10,6 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -23,6 +23,10 @@ public class UserServiceTest {
 
     @Mock
     UserRepository userRepository;
+
+    @Mock
+    EmailServiceImpl emailService;
+
     String firstName = "John";
     String lastName = "Wick";
     String password = "12345";
@@ -65,6 +69,19 @@ public class UserServiceTest {
         }, "Empty first name should throw illegal argument exception");
 
         assertEquals(exceptionExpectedMessage, exception.getMessage(),"Exception message incorrect");
+    }
 
+    @Test
+    @DisplayName("EmailNotificationException is handled")
+    void testCreateUser_WhenEmailNotificationExceptionThrow_throwsUserException(){
+        when(userRepository.save(any(User.class))).thenReturn(true);
+        doThrow(EmailNotificationException.class)
+                .when(emailService)
+                .scheduleEmailConfirmation(any(User.class));
+        assertThrows(UserException.class,
+                () -> userService.createUser(firstName,lastName,password,repeatPassword),
+                "Should have thrown UserServiceException instead");
+
+        verify(emailService, times(1)).scheduleEmailConfirmation(any(User.class));
     }
 }
