@@ -1,22 +1,33 @@
 package com.example.learningmockito.service;
 
 import com.example.learningmockito.model.User;
-import org.junit.jupiter.api.BeforeAll;
+import com.example.learningmockito.repository.UserRepository;
+import com.example.learningmockito.repository.UserRepositoryImpl;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.Mockito;
+import org.mockito.junit.jupiter.MockitoExtension;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+@ExtendWith(MockitoExtension.class)
 public class UserServiceTest {
-    UserService userService = new UserServiceImpl();
 
+    @InjectMocks
+    UserServiceImpl userService;
+
+    @Mock
+    UserRepository userRepository;
     String firstName = "John";
     String lastName = "Wick";
     String password = "12345";
     String repeatPassword = "12345";
 
     @BeforeEach
-    void beforeAll(){
+    void init(){
         firstName = "John";
         lastName = "Wick";
         password = "12345";
@@ -25,6 +36,7 @@ public class UserServiceTest {
 
     @Test
     void testCreateUser_withValidValue_UserObjectNotNull(){
+        Mockito.when(userRepository.save(Mockito.any(User.class))).thenReturn(true);
         User user = userService.createUser(firstName, lastName, password, repeatPassword);
 
         assertNotNull(user);
