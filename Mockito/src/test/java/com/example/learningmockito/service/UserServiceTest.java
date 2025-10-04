@@ -19,4 +19,20 @@ public class UserServiceTest {
 
         assertNotNull(user);
     }
+
+    @Test
+    void testCreateUser_WhenFirstNameIsEmpty_IllegalArgumentExceptionThrown(){
+        String firstName = "";
+        String lastName = "Wick";
+        String password = "12345";
+        String repeatPassword = "12345";
+        String exceptionExpectedMessage= "First name can not be empty";
+
+        IllegalArgumentException exception = assertThrows(IllegalArgumentException.class, () -> {
+            userService.createUser(firstName, lastName, password, repeatPassword);
+        }, "Empty first name should throw illegal argument exception");
+
+        assertEquals(exceptionExpectedMessage, exception.getMessage(),"Exception message incorrect");
+
+    }
 }
