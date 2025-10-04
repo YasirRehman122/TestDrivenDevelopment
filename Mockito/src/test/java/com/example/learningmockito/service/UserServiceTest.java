@@ -1,9 +1,10 @@
 package com.example.learningmockito.service;
 
+import com.example.learningmockito.exception.UserException;
 import com.example.learningmockito.model.User;
 import com.example.learningmockito.repository.UserRepository;
-import com.example.learningmockito.repository.UserRepositoryImpl;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -12,6 +13,7 @@ import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 public class UserServiceTest {
@@ -36,10 +38,21 @@ public class UserServiceTest {
 
     @Test
     void testCreateUser_withValidValue_UserObjectNotNull(){
-        Mockito.when(userRepository.save(Mockito.any(User.class))).thenReturn(true);
+        when(userRepository.save(any(User.class))).thenReturn(true);
         User user = userService.createUser(firstName, lastName, password, repeatPassword);
-
+        verify(userRepository, atMostOnce())
+                        .save(any(User.class));
         assertNotNull(user);
+    }
+
+    @Test
+    @DisplayName("If save() throws Runtime exception then throw UserException")
+    void testCreateUser_whenRuntimeExceptionOccurs_ThrowUserException(){
+        when(userRepository.save(any(User.class))).thenThrow(RuntimeException.class);
+
+        assertThrows(UserException.class,
+                () -> userService.createUser(firstName,lastName,password,repeatPassword),
+                "User exception should have been thrown");
     }
 
     @Test
